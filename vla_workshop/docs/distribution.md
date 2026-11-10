@@ -1,54 +1,52 @@
-# GitHubとColabでの配布
+# ipynbを配布する
 
-## 役割
+参加者には目的別のipynbを渡します。GitHubは講師の開発・版管理に使い、配布には共有Driveも使えます。
+参加者が教材リポジトリをcloneしたり、教材のPythonファイルを別途ダウンロードしたりする操作はありません。
+ライブラリとモデルは実行時にネットワークから取得します。
 
-- GitHub：ノートブック、共通コード、設定、説明、実験の考察を管理する。
-- Colab：教材の特定commitを取得して、環境確認・推論・今後の学習を実行する。
-- Driveなど：動画、収集データ、学習済み重みを保存する。
+## 配布するファイル
 
-現在のGitルートは`self_work/`です。このルートをGitHubへ配布する場合、ノートブックのパスは`vla_workshop/colab.ipynb`です。
-配布先は[takumiecd/vla-workshop](https://github.com/takumiecd/vla-workshop)です。
-ノートブックは共通コードの特定commitを取得します。
+- `lessons/00_environment/colab.ipynb`：環境と観測の確認。
+- `lessons/01_smolvla_inference/colab.ipynb`：CUDAによるSmolVLA推論。
+- `colab.ipynb`：各冊への案内。実行セルはありません。
 
-## GitHubで配布するとき
+各冊には、共通のPythonコード・設定・固定依存リストを同梱しています。
+各冊を単独で実行でき、前のノートブックの変数やファイルは不要です。
+講師は`src/vla_workshop/`を一か所で修正し、配布前に各冊を再生成します。
+内蔵プログラムのSHA-256をノートブックと結果に記録します。
 
-1. 教材の共通コード・設定・説明をGitHubへpushし、そのcommit SHAを取得します。
-2. `colab.ipynb`の教材取得セルに、配布先の`REPOSITORY`、コードの`COMMIT`、`PROJECT_SUBDIR`を設定します。
-3. 設定したノートブックをpushし、READMEに「Open in Colab」リンクを置きます。
-4. ノートブックを開いて実行し、表示された教材commitと、00・01の結果を確認します。
+## 共有Driveで配布する
 
-取得するコードのcommitと、配布するノートブック自身のcommitは別でも構いません。
-全員が使う共通コードの版は`COMMIT`で固定し、配布リンクも必要に応じてノートブックのcommitに固定します。
+1. 下記の生成コマンドを実行し、`outputs/colab/vla_workshop_notebooks.zip`を展開します。
+2. 展開したipynbを共有Driveの教材フォルダに置きます。ZIPを参加者に展開してもらう必要はありません。
+3. 参加者には00・01の原本を閲覧できる権限を付けます。
+4. 各自「ファイル → ドライブにコピーを保存」で自分用のコピーを作ります。
+5. 各冊でT4 GPUを選び、上から実行し、最後のセルで結果をDriveに保存します。
 
-リンクの形式は以下です。配布先が決まったらプレースホルダーを実際の値に置き換えます。
+共有原本を全員が直接編集しない運用にします。
+結果を共有する場合は、原本とは別の結果フォルダにメンバーごとの保存先を作ります。
+保存先のパスはノートブック最後の`RESULTS_DIR`で指定します。
+結果ファイル名には実習名・日時・ランダムIDが付き、同時実行での衝突を避けます。
 
-```text
-https://colab.research.google.com/github/<owner>/<repo>/blob/<notebook-ref>/vla_workshop/colab.ipynb
-```
+GitHubからも[実習一覧](https://colab.research.google.com/github/takumiecd/vla-workshop/blob/main/vla_workshop/colab.ipynb)を開けます。
+共有Drive経由でも同じ内容を実行できます。
+共有フォルダの作成・アップロードは、配布先を決めてから行ってください。
 
-ノートブックの取得セルは公開GitHubリポジトリ向けです。
-privateで始める場合は、下記のZIP配布も利用できます。トークンを教材や出力に保存する操作はありません。
+## 更新手順
 
-## ZIPで先に試すとき
-
-プロジェクトのルートで次を実行します。
+プロジェクトのルートで実行します。
 
 ```bash
-python3 scripts/build_colab_bundle.py
+python3 scripts/build_colab_notebook.py
+python3 scripts/build_colab_notebook.py --check
 ```
 
-参加者には`colab.ipynb`と、生成された`outputs/colab/vla_workshop.zip`を渡します。
-ZIP配布用ノートブックでは`REPOSITORY`を空文字に設定します。
-Colabの「ノートブックを開く」からipynbをアップロードし、教材取得セルでZIPを選択します。
-各ファイルのSHA256を照合してからセットアップします。
+生成した各冊をGitHubへpushし、共有Driveにも新しい原本を置きます。
+各自の古いDriveコピーは自動更新されません。教材を更新したことを知らせ、新しい原本からコピーしてもらいます。
+同じ比較実験では同じ版を使います。
 
-このZIPは教材ソース専用です。データ、モデル重み、outputs、venv、Git履歴は含みません。
+ノートブックに表示結果や認証情報を保存して配布しないでください。
+モデル重み・収集データ・動画はノートブックに埋め込まず、Driveなどで管理します。
 
-## 参加者の作業
-
-参加者はノートブックを自分のDriveにコピーし、GPUランタイムで上から実行します。
-実行結果はColab内の`outputs/`に保存されます。最後のセルでZIPを取得し、Driveなどへ保管してください。
-Colabのランタイムを削除するとローカルのファイルは失われるため、提出前に保存した動画・ログを開いて確認します。
-
-教材を更新するときは、コードcommitとノートブック設定をセットで更新します。
-同じ比較実験の途中では、参加者ごとに異なる版へ更新しないようにします。
+開発・検証用のソースZIPは`python3 scripts/build_colab_bundle.py`で別途作れます。
+これは講師用で、参加者の実習には不要です。

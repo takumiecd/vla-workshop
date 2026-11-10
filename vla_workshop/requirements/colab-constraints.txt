@@ -1,0 +1,2 @@
+# Keep the test runner compatible with the development extra as well.
+pytest==8.4.2

@@ -6,9 +6,10 @@ build-backend = "setuptools.build_meta"
 name = "vla-workshop"
 version = "0.1.0"
 description = "Step-by-step robosuite and SmolVLA workshop"
-requires-python = ">=3.12,<3.13"
+requires-python = ">=3.12,<3.14"
 dependencies = [
-  "numpy>=2.0,<2.3",
+  "numpy==2.1.3",
+  "opencv-python==4.13.0.92",
   # Official 1.5.2 source after "make mink optional"; PyPI 1.5.2 requires NumPy < 2.
   "robosuite @ https://github.com/ARISE-Initiative/robosuite/archive/95743f6687ad7394ccb6e865fa4e1b99114e580d.tar.gz",
   "mujoco==3.3.2",
@@ -18,9 +19,10 @@ dependencies = [
 [project.optional-dependencies]
 smolvla = [
   "lerobot[smolvla]==0.7.0",
-  "torch>=2.7,<2.16",
-  "torchvision>=0.22,<0.30",
+  "torch==2.11.0+cu128",
+  "torchvision==0.26.0+cu128",
   "transformers==5.22.0",
+  "opencv-python-headless==4.13.0.92",
 ]
 dev = ["pytest>=8,<9", "ruff>=0.9,<1"]
 
@@ -34,9 +36,18 @@ where = ["src"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 
+[tool.uv.sources]
+torch = { index = "pytorch-cu128" }
+torchvision = { index = "pytorch-cu128" }
+
+[[tool.uv.index]]
+name = "pytorch-cu128"
+url = "https://download.pytorch.org/whl/cu128"
+explicit = true
+
 [tool.ruff]
 line-length = 100
-target-version = "py310"
+target-version = "py312"
 
 [tool.ruff.lint]
 select = ["E", "F", "I", "UP", "B"]

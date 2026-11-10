@@ -16,45 +16,43 @@ SmolVLAの推論から、データ収集・fine-tuning・LIBEROでの評価と�
 | 05 | 改善実験 | 共通の評価条件で改善を検証し、考察を共有する | 今後追加 |
 
 各実習は「目的 → 実行方法 → 確認すること → 達成条件」の形式で整えます。
+1冊の中身と公開順は[レッスン構成](docs/course_structure.md)を参照してください。
 
 13件のテストとノートブックの形式・構文チェックは通っています。
 Colab GPUでの00・01の実行確認は未完了です。[検証状況](docs/validation.md)を確認してください。
 
 ## Google Colabで取り組む
 
-参加者の入口は[colab.ipynb](colab.ipynb)です。上から順に実行し、説明・動画・ログ・確認課題を見て進めます。
+参加者は目的別のノートブックを使います。各冊だけで準備から実行・結果保存まで進められます。
 
-1. Colabでこのノートブックを開き、自分のDriveにコピーします。
-2. ランタイムのタイプをGPUに変更します（T4 / L4など）。
-3. 教材コードを取得します。GitHub配布時は講師が指定したcommitを取得し、ZIP配布時は`vla_workshop.zip`をアップロードします。
-4. セットアップ → 00の環境確認 → 01の推論を順番に実行します。最初は各20ステップです。
-5. 最後のセルから結果をZIPでダウンロードし、ランタイムを接続解除して削除します。
+- [00: 環境と観測の確認をColabで開く](https://colab.research.google.com/github/takumiecd/vla-workshop/blob/main/vla_workshop/lessons/00_environment/colab.ipynb)
+- [01: SmolVLA推論をColabで開く](https://colab.research.google.com/github/takumiecd/vla-workshop/blob/main/vla_workshop/lessons/01_smolvla_inference/colab.ipynb)
 
-Python 3.12のGPUランタイムを使います。初回は依存パッケージとモデルを取得するため時間がかかります。
-教材専用の仮想環境をノートブックが準備します。参加者のPCへのCUDAやPythonのインストールは不要です。
+1. 共有Driveのipynb、または上のリンクを開き、自分のDriveにコピーします。
+2. ランタイムのタイプを**T4 GPU**に変更します。各冊のGPU設定もT4です。
+3. 上から順に準備・実習・確認課題を進めます。最初は20ステップです。
+4. 最後のセルで動画・ログをDriveに保存し、ランタイムを接続解除して削除します。
 
-ノートブック内の設定でステップ数・エピソード数を変更できます。
-モデル・カメラ・推論設定を変えるときは`configs/lift.json`を別名でコピーし、変更した設定も実験記録に残します。
+Python 3.12／3.13向けの固定依存リストから、隔離した教材用venvを準備します。
+各冊に共通プログラムを同梱しており、教材リポジトリのcloneや教材の.pyの別途取得は不要です。
+ライブラリとモデルは実行時に取得するため、ネットワークと初回準備の時間が必要です。
+
+T4指定は割り当て要求です。Colabへの接続前に失敗している場合は教材コードは動いていません。
+古いDriveコピーは自動更新されないため、更新後は新しい原本からコピーしてください。
 
 ## 講師・配布担当へ
 
-GitHubを教材の配布・更新先、Colabを実行先にします。
-配布先は[takumiecd/vla-workshop](https://github.com/takumiecd/vla-workshop)です。
-[Open in Colab](https://colab.research.google.com/github/takumiecd/vla-workshop/blob/main/vla_workshop/colab.ipynb)から実習を開けます。
-教材を更新するときは[GitHubとColabでの配布手順](docs/distribution.md)を参照してください。
-
-GitHubからの取得に加えて、ノートブックとソースZIPの配布でも同じ実習を試せます。
-ZIPを使う場合はノートブックの`REPOSITORY`を空文字にしてください。
-ZIPは次のコマンドで生成します（Python標準ライブラリだけで実行できます）。
+共有Driveに目的別のipynbを置いて配布できます。各自が原本からコピーして実行します。
+GitHubでは読みやすい共通ソースを一か所で管理し、各冊への同梱を自動生成します。
 
 ```bash
-python3 scripts/build_colab_bundle.py
+python3 scripts/build_colab_notebook.py
+python3 scripts/build_colab_notebook.py --check
 ```
 
-出力は`outputs/colab/vla_workshop.zip`です。データ・重み・実験出力・認証情報を含めず、教材ファイルだけを梱包します。
-ノートブックとZIPを同じ版で配布してください。
-
-ローカルのLinux環境で開発する場合は[開発手順](docs/development.md)を参照してください。
+`outputs/colab/vla_workshop_notebooks.zip`に配布用のipynbがまとまります。
+[配布手順](docs/distribution.md)と[開発手順](docs/development.md)を参照してください。
+配布先は[takumiecd/vla-workshop](https://github.com/takumiecd/vla-workshop)です。
 
 ## 最初の実習の仕様
 
@@ -76,9 +74,10 @@ LIBEROの実習は今後追加します。依存関係が異なるため、こ�
 
 ```text
 vla_workshop/
-├── colab.ipynb                 # Colabでの実習の入口
-├── scripts/                    # ColabセットアップとソースZIP作成
-├── lessons/                    # 順番に読む説明と実行用スクリプト
+├── colab.ipynb                 # 目的別ノートブックの一覧
+├── scripts/                    # セットアップ・ノートブック生成
+├── notebooks/                  # 講師用の共通テンプレート
+├── lessons/                    # 各冊のcolab.ipynb・説明・実行用スクリプト
 ├── src/vla_workshop/
 │   ├── envs/                   # robosuite・LIBEROとの接続
 │   ├── policies/               # SmolVLAとの接続
@@ -94,7 +93,8 @@ vla_workshop/
 各実習のスクリプトは、共通処理を設定付きで呼び出す入口にします。
 環境確認・推論・データ収集・学習後の評価で、同じ環境生成と観測・行動の変換処理を使います。
 robosuiteとLIBEROの違いは`envs/`内の接続部分で扱い、それぞれの観測・行動仕様を明記します。
-依存関係は`pyproject.toml`、実習の共通設定は`configs/lift.json`にまとめます。
+主要な依存関係は`pyproject.toml`、間接依存を含む固定版は`requirements/colab-py312.txt`と`requirements/colab-py313.txt`にまとめます。
+[バージョン構成](docs/versions.md)も参照してください。実習の共通設定は`configs/lift.json`です。
 
 ## 実装方針と参照コード
 

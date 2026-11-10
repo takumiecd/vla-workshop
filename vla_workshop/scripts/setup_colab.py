@@ -1,64 +1,108 @@
-"""Create a reproducible workshop environment without changing the notebook kernel."""
+"""Install the workshop's locked environment for a Colab T4 runtime."""
 
 import argparse
+import hashlib
 import json
 import subprocess
 import sys
 import venv
 from pathlib import Path
+from typing import TextIO
+
+
+def require_t4() -> str:
+    """Check the assigned GPU after Colab has connected; this cannot allocate a GPU."""
+    try:
+        names = (
+            subprocess.check_output(
+                ["nvidia-smi", "--query-gpu=name", "--format=csv,noheader"], text=True
+            )
+            .strip()
+            .splitlines()
+        )
+    except (FileNotFoundError, subprocess.CalledProcessError) as error:
+        raise RuntimeError(
+            "Colabの「ランタイム → ランタイムのタイプを変更」で「T4 GPU」を選択し、"
+            "接続してから実行してください。"
+        ) from error
+    if len(names) != 1 or "T4" not in names[0].upper():
+        raise RuntimeError(f"T4 GPUを選択してください。割り当てられたGPU: {names}")
+    return names[0]
+
+
+def run_logged(command: list[str], log: TextIO) -> None:
+    """Stream installer output into both the notebook and the saved log."""
+    print("Running:", " ".join(command), flush=True)
+    with subprocess.Popen(
+        command, stdout=subprocess.PIPE, stderr=subprocess.STDOUT, text=True
+    ) as process:
+        assert process.stdout is not None
+        for line in process.stdout:
+            print(line, end="", flush=True)
+            log.write(line)
+            log.flush()
+        if process.wait():
+            raise RuntimeError("セットアップに失敗しました。outputs/setup.logを確認してください。")
 
 
 def setup(project: Path) -> Path:
-    """Reuse Colab's CUDA stack and install workshop libraries into a local venv."""
-    if sys.version_info[:2] != (3, 12):
-        raise RuntimeError("Use a Colab runtime with Python 3.12 for this workshop.")
-    subprocess.run(["nvidia-smi"], check=True)
-    # Check before pip can replace a large, already-working CUDA installation.
-    probe = (
-        "import json,torch,torchvision,numpy; "
-        "from packaging.version import Version; "
-        "assert torch.cuda.is_available(), 'CUDA is unavailable'; "
-        "assert Version('2.7') <= Version(torch.__version__) < Version('2.16'); "
-        "assert Version('0.22') <= Version(torchvision.__version__) < Version('0.30'); "
-        "assert Version('2.0') <= Version(numpy.__version__) < Version('2.3'); "
-        "print(json.dumps(dict(torch=torch.__version__,torchvision=torchvision.__version__,"
-        "numpy=numpy.__version__,cuda=torch.version.cuda,gpu=torch.cuda.get_device_name(0))))"
+    """Install exact dependency versions in an isolated environment and check them."""
+    if sys.version_info[:2] not in {(3, 12), (3, 13)}:
+        raise RuntimeError("Python 3.12または3.13のColabランタイムを使ってください。")
+    gpu = require_t4()
+    lock = (
+        project / "requirements" / f"colab-py{sys.version_info.major}{sys.version_info.minor}.txt"
     )
-    base_environment = json.loads(subprocess.check_output([sys.executable, "-c", probe], text=True))
+    lock_hash = hashlib.sha256(lock.read_bytes()).hexdigest()
     environment = project / ".venv"
     python = environment / "bin" / "python"
-    if not python.exists():
-        venv.EnvBuilder(with_pip=True, system_site_packages=True).create(environment)
-    commands = [
-        [str(python), "-m", "pip", "install", "-e", f"{project}[smolvla]"],
+    output = project / "outputs"
+    output.mkdir(parents=True, exist_ok=True)
+    record = output / "setup.json"
+    previous = json.loads(record.read_text()) if record.exists() else {}
+    ready = (
+        python.exists()
+        and previous.get("status") == "completed"
+        and previous.get("lock_sha256") == lock_hash
+        and previous.get("host_python_minor") == sys.version_info.minor
+    )
+    if not ready:
+        # .venv contains generated packages only. Rebuild an older or incomplete installation.
+        # Colab may omit ensurepip. The host pip can bootstrap a pip-less venv.
+        venv.EnvBuilder(with_pip=False, clear=environment.exists()).create(environment)
+        commands = [
+            [sys.executable, "-m", "pip", "--python", str(python), "install", "pip==26.3"],
+            [str(python), "-m", "pip", "install", "-r", str(lock)],
+            [str(python), "-m", "pip", "install", "--no-deps", "-e", str(project)],
+        ]
+    else:
+        commands = []
+    commands.extend(
         [
-            str(python),
-            "-c",
-            (
-                "import json,torch; assert torch.cuda.is_available(), 'CUDA is unavailable'; "
-                "print(json.dumps(dict(torch=torch.__version__,cuda=torch.version.cuda,"
-                "gpu=torch.cuda.get_device_name(0))))"
-            ),
-        ],
-    ]
-    log_path = project / "outputs" / "setup.log"
-    log_path.parent.mkdir(parents=True, exist_ok=True)
-    with log_path.open("w") as log:
+            [str(python), "-m", "pip", "check"],
+            [
+                str(python),
+                str(project / "scripts/check_environment.py"),
+                "--output",
+                str(output / "environment.json"),
+            ],
+        ]
+    )
+    record.write_text(json.dumps({"status": "running", "lock_sha256": lock_hash}) + "\n")
+    with (output / "setup.log").open("w") as log:
         for command in commands:
-            print("Running:", " ".join(command), flush=True)
-            result = subprocess.run(command, stdout=log, stderr=subprocess.STDOUT)
-            log.flush()
-            if result.returncode:
-                print(log_path.read_text()[-10000:], flush=True)
-                raise RuntimeError(f"Setup failed; see {log_path}")
+            run_logged(command, log)
     freeze = subprocess.check_output([str(python), "-m", "pip", "freeze"], text=True)
-    (log_path.parent / "requirements-resolved.txt").write_text(freeze)
-    (log_path.parent / "setup.json").write_text(
+    (output / "requirements-resolved.txt").write_text(freeze)
+    record.write_text(
         json.dumps(
             {
                 "python": str(python),
                 "host_python": sys.version,
-                "base_environment": base_environment,
+                "host_python_minor": sys.version_info.minor,
+                "gpu": gpu,
+                "lock_file": lock.name,
+                "lock_sha256": lock_hash,
                 "status": "completed",
             },
             indent=2,

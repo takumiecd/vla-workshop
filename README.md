@@ -6,13 +6,14 @@ robosuiteでSmolVLAを動かし、データ収集・fine-tuning・LIBEROでの�
 
 ## 参加者へ
 
-1. 上のボタンからノートブックを開き、自分のDriveにコピーします。
-2. GPUランタイムを選び、上から順番に実行します。
+1. 上のボタンから実習一覧を開き、00・01それぞれのノートブックを自分のDriveにコピーします。
+2. T4 GPUランタイムを選び、上から順番に実行します。
 3. 00で環境・観測・記録を確認し、01でCUDAによるSmolVLA推論を実行します。
-4. 最後に結果をダウンロードし、ランタイムを接続解除して削除します。
+4. 各冊の最後に結果をDriveへ保存し、ランタイムを接続解除して削除します。
 
-処理本体は共通のPythonコードです。ノートブックで実行結果を見ながら、各段階のコードを読んで学べます。
+各冊に共通のPythonコードを同梱しています。教材リポジトリのcloneや教材の.pyの別途取得は不要です。ライブラリとモデルは実行時に取得します。共有Driveにipynbを置いて配布することもできます。ノートブックで実行結果を見ながら、各段階のコードを読んで学べます。
 
+- [1レッスンの構成と公開順](vla_workshop/docs/course_structure.md)
 - [全体の説明と実習一覧](vla_workshop/README.md)
 - [00: 環境と観測の確認](vla_workshop/lessons/00_environment/README.md)
 - [01: SmolVLAの推論](vla_workshop/lessons/01_smolvla_inference/README.md)

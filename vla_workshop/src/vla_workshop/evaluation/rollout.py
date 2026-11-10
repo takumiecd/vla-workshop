@@ -4,7 +4,7 @@ import hashlib
 import json
 import time
 from dataclasses import asdict
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from importlib.metadata import PackageNotFoundError, distribution, version
 from pathlib import Path
 from typing import Any
@@ -143,7 +143,7 @@ def run_episode(
 
 def run(config: RunConfig, policy: Policy, mode: str) -> Path:
     run_dir = Path(config.output_dir) / (
-        datetime.now(timezone.utc).strftime("%Y%m%dT%H%M%SZ") + f"_{mode}_{uuid4().hex[:8]}"
+        datetime.now(UTC).strftime("%Y%m%dT%H%M%SZ") + f"_{mode}_{uuid4().hex[:8]}"
     )
     run_dir.mkdir(parents=True, exist_ok=False)
     metadata = {
