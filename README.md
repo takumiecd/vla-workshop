@@ -20,3 +20,7 @@ robosuiteでSmolVLAを動かし、データ収集・fine-tuning・LIBEROでの�
 
 最初の2段階を実装しています。データ収集・学習・LIBERO評価の実習は順次追加します。
 最初の実習はLiftでの接続確認です。LIBEROでの成功率評価とは区別してください。
+
+コードの13件のテストとノートブックの形式・構文を確認しています。
+Colab GPUでの実行確認は、CLI接続断とGPU割り当て時の503により未完了です。
+現状と確認範囲は[検証状況](vla_workshop/docs/validation.md)を参照してください。
