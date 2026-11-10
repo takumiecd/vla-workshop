@@ -27,7 +27,7 @@ SmolVLAの推論から、データ収集・fine-tuning・LIBEROでの評価と�
 4. セットアップ → 00の環境確認 → 01の推論を順番に実行します。最初は各20ステップです。
 5. 最後のセルから結果をZIPでダウンロードし、ランタイムを接続解除して削除します。
 
-Python 3.10〜3.12のGPUランタイムを使います。初回は依存パッケージとモデルを取得するため時間がかかります。
+Python 3.12のGPUランタイムを使います。初回は依存パッケージとモデルを取得するため時間がかかります。
 教材専用の仮想環境をノートブックが準備します。参加者のPCへのCUDAやPythonのインストールは不要です。
 
 ノートブック内の設定でステップ数・エピソード数を変更できます。
@@ -36,9 +36,12 @@ Python 3.10〜3.12のGPUランタイムを使います。初回は依存パッ�
 ## 講師・配布担当へ
 
 GitHubを教材の配布・更新先、Colabを実行先にします。
-GitHubのremoteと配布先URLはまだ設定していません。[GitHubとColabでの配布手順](docs/distribution.md)に沿って設定してください。
+配布先は[takumiecd/vla-workshop](https://github.com/takumiecd/vla-workshop)です。
+[Open in Colab](https://colab.research.google.com/github/takumiecd/vla-workshop/blob/main/vla_workshop/colab.ipynb)から実習を開けます。
+教材を更新するときは[GitHubとColabでの配布手順](docs/distribution.md)を参照してください。
 
-公開先が決まる前は、ノートブックとソースZIPを配布して同じ実習を試せます。
+GitHubからの取得に加えて、ノートブックとソースZIPの配布でも同じ実習を試せます。
+ZIPを使う場合はノートブックの`REPOSITORY`を空文字にしてください。
 ZIPは次のコマンドで生成します（Python標準ライブラリだけで実行できます）。
 
 ```bash

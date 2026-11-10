@@ -3,7 +3,7 @@
 参加者向けの標準入口は`colab.ipynb`です。
 このページはローカルのLinux＋NVIDIA GPU環境でコードを変更・確認する場合の補足です。
 
-Python 3.10〜3.12を使い、プロジェクトのルートで実行します。
+Python 3.12を使い、プロジェクトのルートで実行します。
 EGL/OpenGLのランタイムライブラリ（例：`libegl1`、`libgl1`）も必要です。
 
 ```bash
@@ -11,7 +11,7 @@ nvidia-smi
 python3 -m venv .venv
 source .venv/bin/activate
 python -m pip install --upgrade pip
-python -m pip install torch==2.6.0 torchvision==0.21.0 --index-url https://download.pytorch.org/whl/cu126
+# CUDA対応PyTorch 2.7以上2.16未満と対応するtorchvisionを事前に用意します。
 python -m pip install -e ".[smolvla,dev]"
 python -m pip check
 python -c "import torch; assert torch.cuda.is_available()"

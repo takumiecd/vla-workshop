@@ -9,28 +9,28 @@ from pathlib import Path
 
 
 def setup(project: Path) -> Path:
-    """Install the pinned CUDA stack into a project-local virtual environment."""
-    if not (3, 10) <= sys.version_info[:2] < (3, 13):
-        raise RuntimeError("Use a Colab runtime with Python 3.10–3.12 for this workshop.")
+    """Reuse Colab's CUDA stack and install workshop libraries into a local venv."""
+    if sys.version_info[:2] != (3, 12):
+        raise RuntimeError("Use a Colab runtime with Python 3.12 for this workshop.")
     subprocess.run(["nvidia-smi"], check=True)
+    # Check before pip can replace a large, already-working CUDA installation.
+    probe = (
+        "import json,torch,torchvision,numpy; "
+        "from packaging.version import Version; "
+        "assert torch.cuda.is_available(), 'CUDA is unavailable'; "
+        "assert Version('2.7') <= Version(torch.__version__) < Version('2.16'); "
+        "assert Version('0.22') <= Version(torchvision.__version__) < Version('0.30'); "
+        "assert Version('2.0') <= Version(numpy.__version__) < Version('2.3'); "
+        "print(json.dumps(dict(torch=torch.__version__,torchvision=torchvision.__version__,"
+        "numpy=numpy.__version__,cuda=torch.version.cuda,gpu=torch.cuda.get_device_name(0))))"
+    )
+    base_environment = json.loads(subprocess.check_output([sys.executable, "-c", probe], text=True))
     environment = project / ".venv"
     python = environment / "bin" / "python"
     if not python.exists():
-        venv.EnvBuilder(with_pip=True).create(environment)
+        venv.EnvBuilder(with_pip=True, system_site_packages=True).create(environment)
     commands = [
-        [str(python), "-m", "pip", "install", "--upgrade", "pip"],
-        [
-            str(python),
-            "-m",
-            "pip",
-            "install",
-            "torch==2.6.0",
-            "torchvision==0.21.0",
-            "--index-url",
-            "https://download.pytorch.org/whl/cu126",
-        ],
         [str(python), "-m", "pip", "install", "-e", f"{project}[smolvla]"],
-        [str(python), "-m", "pip", "check"],
         [
             str(python),
             "-c",
@@ -58,6 +58,7 @@ def setup(project: Path) -> Path:
             {
                 "python": str(python),
                 "host_python": sys.version,
+                "base_environment": base_environment,
                 "status": "completed",
             },
             indent=2,

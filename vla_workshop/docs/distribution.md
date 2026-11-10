@@ -7,7 +7,8 @@
 - Driveなど：動画、収集データ、学習済み重みを保存する。
 
 現在のGitルートは`self_work/`です。このルートをGitHubへ配布する場合、ノートブックのパスは`vla_workshop/colab.ipynb`です。
-この実装作業ではGitHubリポジトリの作成、remote設定、commit、pushはしていません。
+配布先は[takumiecd/vla-workshop](https://github.com/takumiecd/vla-workshop)です。
+ノートブックは共通コードの特定commitを取得します。
 
 ## GitHubで配布するとき
 
@@ -37,6 +38,7 @@ python3 scripts/build_colab_bundle.py
 ```
 
 参加者には`colab.ipynb`と、生成された`outputs/colab/vla_workshop.zip`を渡します。
+ZIP配布用ノートブックでは`REPOSITORY`を空文字に設定します。
 Colabの「ノートブックを開く」からipynbをアップロードし、教材取得セルでZIPを選択します。
 各ファイルのSHA256を照合してからセットアップします。
 

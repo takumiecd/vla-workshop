@@ -6,9 +6,9 @@ build-backend = "setuptools.build_meta"
 name = "vla-workshop"
 version = "0.1.0"
 description = "Step-by-step robosuite and SmolVLA workshop"
-requires-python = ">=3.10,<3.13"
+requires-python = ">=3.12,<3.13"
 dependencies = [
-  "numpy==2.2.6",
+  "numpy>=2.0,<2.3",
   # Official 1.5.2 source after "make mink optional"; PyPI 1.5.2 requires NumPy < 2.
   "robosuite @ https://github.com/ARISE-Initiative/robosuite/archive/95743f6687ad7394ccb6e865fa4e1b99114e580d.tar.gz",
   "mujoco==3.3.2",
@@ -17,11 +17,10 @@ dependencies = [
 
 [project.optional-dependencies]
 smolvla = [
-  "lerobot[smolvla]==0.4.4",
-  "torch==2.6.0",
-  "torchvision==0.21.0",
-  "torchcodec==0.2.1",
-  "transformers==4.57.1",
+  "lerobot[smolvla]==0.7.0",
+  "torch>=2.7,<2.16",
+  "torchvision>=0.22,<0.30",
+  "transformers==5.22.0",
 ]
 dev = ["pytest>=8,<9", "ruff>=0.9,<1"]
 

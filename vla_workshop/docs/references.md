@@ -16,10 +16,10 @@
 ## 公式資料
 
 - [robosuiteコントローラ](https://robosuite.ai/docs/modules/controllers.html)：OSC_POSEと参照座標系。
-- [robosuiteの固定commit](https://github.com/ARISE-Initiative/robosuite/tree/95743f6687ad7394ccb6e865fa4e1b99114e580d)：1.5.2でminkを任意依存にした公式修正。PyPI 1.5.2の必須minkはNumPy < 2、LeRobotのrerun-sdkはNumPy >= 2を要求するため、OSC_POSE実習ではminkを使わないこのcommitを採用。
+- [robosuiteの固定commit](https://github.com/ARISE-Initiative/robosuite/tree/95743f6687ad7394ccb6e865fa4e1b99114e580d)：1.5.2でminkを任意依存にした公式修正。PyPI 1.5.2の必須minkはNumPy < 2、LeRobot 0.7はNumPy >= 2を要求するため、OSC_POSE実習ではminkを使わないこのcommitを採用。
 - [SmolVLAガイド](https://huggingface.co/docs/lerobot/smolvla)：モデルとfine-tuningの概要。
-- [LeRobot 0.4.4](https://github.com/huggingface/lerobot/tree/v0.4.4)：今回の固定API。
-- [LIBEROの観測processor](https://github.com/huggingface/lerobot/blob/v0.4.4/src/lerobot/processor/env_processor.py)：画像の180度回転と8次元状態の構成。
+- [LeRobot 0.7.0](https://github.com/huggingface/lerobot/tree/v0.7.0)：今回の固定API。
+- [LIBEROの観測processor](https://github.com/huggingface/lerobot/blob/v0.7.0/src/lerobot/processor/env_processor.py)：画像の180度回転と8次元状態の構成。
 - [使用するSmolVLAチェックポイント](https://huggingface.co/HuggingFaceVLA/smolvla_libero/tree/6721902bc4d61e50a3bfdb11dfb4cb626f05d102)：入出力と正規化統計。
 
 新しいAPIへ更新する際は、依存関係・入出力仕様・短い実行確認をまとめて更新します。
