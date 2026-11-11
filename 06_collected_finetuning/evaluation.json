@@ -8,41 +8,10 @@
       0,
       1,
       2
-    ],
-    "test": [
-      10,
-      11,
-      12,
-      13,
-      14,
-      15,
-      16,
-      17,
-      18,
-      19
-    ],
-    "collection": [
-      20,
-      21,
-      22,
-      23,
-      24
     ]
   },
   "seed": 0,
   "settle_steps": 10,
   "max_steps": 280,
-  "renderer": "egl",
-  "policy": {
-    "path": "HuggingFaceVLA/smolvla_libero",
-    "revision": "6721902bc4d61e50a3bfdb11dfb4cb626f05d102",
-    "vlm_revision": "7b375e1b73b11138ff12fe22c8f2822d8fe03467",
-    "device": "cuda",
-    "n_action_steps": 1,
-    "camera_map": {
-      "observation.images.image": "agentview",
-      "observation.images.image2": "robot0_eye_in_hand"
-    },
-    "image_transform": "rotate180"
-  }
+  "renderer": "egl"
 }

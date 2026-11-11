@@ -1,6 +1,5 @@
 """Paths, provenance, and small validated configurations shared by lessons."""
 
-import hashlib
 import json
 from datetime import UTC, datetime
 from pathlib import Path
@@ -18,10 +17,6 @@ def write_json(path: Path, value: object) -> None:
     temporary = path.with_suffix(path.suffix + ".tmp")
     temporary.write_text(json.dumps(value, indent=2, ensure_ascii=False) + "\n")
     temporary.replace(path)
-
-
-def digest(value: object) -> str:
-    return hashlib.sha256(json.dumps(value, sort_keys=True).encode()).hexdigest()
 
 
 def output_directory(kind: str) -> Path:
