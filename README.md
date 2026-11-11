@@ -5,7 +5,7 @@ robosuiteでSmolVLAを動かし、データの確認・学習・収集を経て�
 更新の案内があったら、[最新版の変更点](https://github.com/takumiecd/vla-workshop/releases/latest)を見て、該当する回のZIPを取り直します。
 
 ```text
-vla_Workshop/
+vla_workshop/
 ├── 00_environment/              # 環境・観測の確認
 ├── 01_smolvla_inference/         # SmolVLAの読み込みと推論
 ├── 02_libero_evaluation/         # LIBERO評価
@@ -31,15 +31,15 @@ vla_Workshop/
 
 ## 初回のセットアップ
 
-1. 一括ZIPを展開し、できた `vla_Workshop` フォルダをGoogle Driveの「マイドライブ」直下に置きます。
+1. 一括ZIPを展開し、できた `vla_workshop` フォルダをGoogle Driveの「マイドライブ」直下に置きます。
 2. 取り組む回のフォルダを開き、中の `.ipynb` をColabで開きます。
 3. 表にあるランタイムを選び、上から順にセルを実行します。教材を別の場所に置いた場合は、最初のセルの `LESSON_DIR` を変更します。
 
 ## 1回分を更新する
 
-たとえば04の更新では、編集済みの `04_finetuning` を別の場所に移してから、`04_finetuning.zip` を `vla_Workshop` の中に展開します。手元で展開した場合は、できた `04_finetuning` フォルダをDriveの同じ場所に置きます。新しいフォルダのノートブックをColabで開くと、いつもの設定で実行できます。
+たとえば04の更新では、編集済みの `04_finetuning` を別の場所に移してから、`04_finetuning.zip` を `vla_workshop` の中に展開します。手元で展開した場合は、できた `04_finetuning` フォルダをDriveの同じ場所に置きます。新しいフォルダのノートブックをColabで開くと、いつもの設定で実行できます。
 
-保存した結果は `vla_Workshop/results` にあります。授業で使った版を取り直すときは、[リリース一覧](https://github.com/takumiecd/vla-workshop/releases)から版を選べます。
+保存した結果は `vla_workshop/results` にあります。授業で使った版を取り直すときは、[リリース一覧](https://github.com/takumiecd/vla-workshop/releases)から版を選べます。
 
 結果はフォルダのまま保存します。05の保存セルは06で使うデータのパスを、
 04・06の保存セルは07で使うモデルのパスを表示します。
