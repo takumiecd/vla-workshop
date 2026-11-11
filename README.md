@@ -10,4 +10,5 @@ Google Colabで取り組む実習教材です。各回のipynbを1冊ずつ配�
 
 [教材一覧・使い方](vla_workshop/README.md)
 
+[00〜07の予定と各回の配布物](vla_workshop/README.md#全体の予定)をまとめています。
 後続の教材は、準備できた回から順に追加します。
