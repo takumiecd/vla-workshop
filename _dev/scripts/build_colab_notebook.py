@@ -103,7 +103,7 @@ def introduction(slug: str, title: str) -> str:
 T4を要求する設定は入っていますが、空きや利用枠によって接続できない場合があります。
 接続前の失敗では教材コードはまだ実行されていません。ノートブックから割り当てを強制することはできません。
 
-確認済みの範囲は[検証状況](https://github.com/takumiecd/vla-workshop/blob/main/vla_workshop/_dev/docs/validation.md)を参照してください。
+確認済みの範囲は[検証状況](https://github.com/takumiecd/vla-workshop/blob/main/_dev/docs/validation.md)を参照してください。
 """
 
 
