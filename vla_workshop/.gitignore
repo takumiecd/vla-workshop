@@ -7,8 +7,5 @@ __pycache__/
 .ruff_cache/
 build/
 dist/
-
-/datasets/*
-!/datasets/.gitkeep
-/outputs/*
-!/outputs/.gitkeep
+outputs/
+datasets/

@@ -1,9 +1,9 @@
 # 開発者向けの実行手順
 
-参加者向けの入口は各実習の`lessons/<実習名>/colab.ipynb`です。
+参加者向けの入口は各回の`00_environment/00_environment.ipynb`と`01_smolvla_inference/01_smolvla_inference.ipynb`です。
 このページはローカルのLinux＋NVIDIA GPU環境でコードを変更・確認する場合の補足です。
 
-Python 3.12または3.13を使い、プロジェクトのルートで実行します。
+Python 3.12または3.13を使い、この`_dev/`フォルダで実行します。
 EGL/OpenGLのランタイムライブラリ（例：`libegl1`、`libgl1`）も必要です。
 
 ```bash
@@ -47,5 +47,5 @@ python3 scripts/build_colab_notebook.py --check
 ```
 
 各冊には同じ共通プログラムが自動同梱されます。生成されたipynbを直接修正すると、再生成時に上書きされます。
-生成器は00・01と案内ノートを作り、配布用ZIPも`outputs/colab/`に保存します。
+生成器は親フォルダの各回ディレクトリの00・01を更新します。READMEを実習の一覧に使います。
 テンプレートは講師用です。参加者には生成済みの各冊を渡します。

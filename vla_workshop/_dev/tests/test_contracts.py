@@ -7,7 +7,6 @@ from types import SimpleNamespace
 import numpy as np
 import pytest
 from scipy.spatial.transform import Rotation
-
 from vla_workshop.config import EnvConfig, PolicyConfig, RunConfig, load_config
 from vla_workshop.envs.robosuite_env import state_vector, validate_action
 from vla_workshop.evaluation import rollout

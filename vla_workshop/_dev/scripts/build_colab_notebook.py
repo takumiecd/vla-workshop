@@ -10,9 +10,6 @@ import textwrap
 from pathlib import Path
 from zipfile import ZIP_DEFLATED, ZipFile, ZipInfo
 
-COLAB_ROOT = (
-    "https://colab.research.google.com/github/takumiecd/vla-workshop/blob/main/vla_workshop"
-)
 LESSONS = (
     ("00_environment", "環境と観測の確認", list(range(10)) + [14, 15]),
     ("01_smolvla_inference", "CUDAでSmolVLAを推論する", list(range(6)) + list(range(10, 16))),
@@ -106,52 +103,14 @@ def introduction(slug: str, title: str) -> str:
 T4を要求する設定は入っていますが、空きや利用枠によって接続できない場合があります。
 接続前の失敗では教材コードはまだ実行されていません。ノートブックから割り当てを強制することはできません。
 
-確認済みの範囲は[検証状況](https://github.com/takumiecd/vla-workshop/blob/main/vla_workshop/docs/validation.md)を参照してください。
+確認済みの範囲は[検証状況](https://github.com/takumiecd/vla-workshop/blob/main/vla_workshop/_dev/docs/validation.md)を参照してください。
 """
-
-
-def index_notebook() -> dict:
-    links = "\n".join(
-        f"- [{slug[:2]}: {title}]({COLAB_ROOT}/lessons/{slug}/colab.ipynb)"
-        for slug, title, _ in LESSONS
-    )
-    source = f"""# VLA Workshop — 実習ノートブック一覧
-
-**1冊＝1つの到達目標**として、次の順に進めます。各冊を自分のDriveにコピーしてください。
-
-{links}
-
-各冊に共通コード・設定・固定依存リストを同梱しているため、ipynbだけで実習を始められます。
-ライブラリとモデルの取得にはネットワークが必要です。各冊でT4 GPUを選び、上から実行します。
-
-講師は各冊のipynbを共有Driveに置いて配布することもできます。
-共有原本を直接編集せず、各自のDriveにコピーし、結果は各冊の最後のセルで保存します。
-この一覧には実行セルがなく、GPUへの接続は不要です。
-
-今後は02: LIBERO評価、03: fine-tuning、04: データ収集、05: 改善実験を追加します。
-これらは未実装です。現在の00・01はLiftでの接続確認で、LIBERO成功率の評価とは分けて扱います。
-
-[教材の説明](https://github.com/takumiecd/vla-workshop/blob/main/vla_workshop/README.md) · [検証状況](https://github.com/takumiecd/vla-workshop/blob/main/vla_workshop/docs/validation.md)
-"""
-    return {
-        "cells": [
-            {
-                "cell_type": "markdown",
-                "id": "workshop-index",
-                "metadata": {},
-                "source": source.splitlines(True),
-            }
-        ],
-        "metadata": {"colab": {"name": "VLA Workshop — 実習一覧"}},
-        "nbformat": 4,
-        "nbformat_minor": 5,
-    }
 
 
 def build(project: Path, check: bool = False) -> None:
     template = json.loads((project / "notebooks/lesson.template.ipynb").read_text())
     bundle, manifest = bundle_program(project)
-    generated = {project / "colab.ipynb": index_notebook()}
+    generated = {}
     for slug, title, indices in LESSONS:
         notebook = copy.deepcopy(template)
         notebook["cells"] = [copy.deepcopy(template["cells"][i]) for i in indices]
@@ -173,26 +132,19 @@ def build(project: Path, check: bool = False) -> None:
             "bundle_sha256": hashlib.sha256(bundle).hexdigest(),
             "files": manifest,
         }
-        generated[project / "lessons" / slug / "colab.ipynb"] = notebook
+        generated[project.parent / slug / f"{slug}.ipynb"] = notebook
     for path, notebook in generated.items():
         encoded = json.dumps(notebook, ensure_ascii=False, indent=2) + "\n"
         if check:
             if not path.exists() or path.read_text() != encoded:
                 raise SystemExit(f"Stale notebook: {path}; run scripts/build_colab_notebook.py")
         else:
+            path.parent.mkdir(parents=True, exist_ok=True)
             path.write_text(encoded)
-            print(f"Generated {path.relative_to(project)}")
+            print(f"Generated {path.relative_to(project.parent)}")
     if check:
         print("All lesson notebooks match their template and common program")
         return
-    # Instructor distribution: only notebooks, no separate program ZIP for participants.
-    output = project / "outputs/colab"
-    output.mkdir(parents=True, exist_ok=True)
-    with ZipFile(output / "vla_workshop_notebooks.zip", "w", ZIP_DEFLATED) as archive:
-        for path in generated:
-            name = "00_START_HERE.ipynb" if path.parent == project else path.parent.name + ".ipynb"
-            archive.write(path, name)
-    print(f"Packaged {len(generated)} notebooks for shared Drive distribution")
 
 
 if __name__ == "__main__":

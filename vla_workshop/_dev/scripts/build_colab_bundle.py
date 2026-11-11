@@ -13,13 +13,11 @@ def build_bundle(project: Path, destination: Path) -> Path:
         "README.md",
         "pyproject.toml",
         ".gitignore",
-        "colab.ipynb",
         "src/**/*.py",
         "configs/*.json",
         "requirements/*.txt",
         "lessons/**/*.md",
         "lessons/**/*.py",
-        "lessons/**/*.ipynb",
         "notebooks/*.ipynb",
         "docs/*.md",
         "scripts/*.py",
@@ -34,6 +32,8 @@ def build_bundle(project: Path, destination: Path) -> Path:
             content = path.read_bytes()
             archive.writestr(f"vla_workshop/{relative}", content)
             manifest[relative] = hashlib.sha256(content).hexdigest()
+        for path in sorted(project.parent.glob("[0-9][0-9]_*/*.ipynb")):
+            archive.writestr(f"notebooks/{path.relative_to(project.parent)}", path.read_bytes())
         archive.writestr("vla_workshop/bundle_manifest.json", json.dumps(manifest, indent=2))
     print(destination)
     print("SHA256:", hashlib.sha256(destination.read_bytes()).hexdigest())
