@@ -13,18 +13,15 @@
   },
   "dataset": {
     "repo_id": "workshop/collected_libero",
-    "root": null,
-    "train_episodes": [
-      0,
-      1
-    ],
-    "validation_episodes": [
-      2
-    ]
+    "root": null
   },
   "steps": 10,
   "batch_size": 1,
   "learning_rate": 0.0001,
   "max_grad_norm": 1.0,
-  "seed": 1000
+  "seed": 1000,
+  "lora": {
+    "rank": 8,
+    "alpha": 16
+  }
 }

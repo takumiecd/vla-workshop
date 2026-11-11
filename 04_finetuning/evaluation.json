@@ -5,9 +5,7 @@
   ],
   "initial_states": {
     "validation": [
-      0,
-      1,
-      2
+      1
     ]
   },
   "seed": 0,

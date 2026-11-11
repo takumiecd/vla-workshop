@@ -108,6 +108,7 @@ opentelemetry-sdk==1.45.2
 opentelemetry-semantic-conventions==0.66b2
 packaging==26.3
 pandas==2.3.3
+peft==0.21.0
 pillow==13.0.0
 platformdirs==4.14.5
 pluggy==1.7.0
