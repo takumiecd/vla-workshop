@@ -1,8 +1,4 @@
 # 00: 環境と観測の確認
 
-このディレクトリを一式で配布します。ipynbの先頭で、同じフォルダのファイルを準備します。
-ipynbだけを配布すると動きません。
-
-`lift.json`でLift環境を設定し、ノートブックで指定した固定行動を実行します。
-
-実行方法・設定・確認課題は[00_environment.ipynb](00_environment.ipynb)にまとめています。
+フォルダ一式をGoogle Driveに置き、[00_environment.ipynb](00_environment.ipynb)をColabで開きます。
+ノートブックの冒頭に、フォルダの置き場所とランタイムの設定を書いています。

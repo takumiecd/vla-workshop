@@ -1,8 +1,4 @@
 # 04: 既存データでfine-tuning
 
-このディレクトリを一式で配布します。ipynbの先頭で、同じフォルダのファイルを準備します。
-ipynbだけを配布すると動きません。
-
-実行する処理はノートブックのセルにあり、補助処理は隣のPythonファイルにあります。
-
-実行方法・設定・確認課題は[04_finetuning.ipynb](04_finetuning.ipynb)にまとめています。
+フォルダ一式をGoogle Driveに置き、[04_finetuning.ipynb](04_finetuning.ipynb)をColabで開きます。
+ノートブックの冒頭に、フォルダの置き場所とランタイムの設定を書いています。
