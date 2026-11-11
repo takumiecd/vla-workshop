@@ -1,53 +1,46 @@
-# Colab T4のバージョン構成
+# Colabで使うバージョン
 
-対象はLinux x86_64、Python 3.12／3.13、NVIDIA T4です。
-ノートブックはGPUをT4に指定し、接続後にも`nvidia-smi`で割り当てを確認します。
-GPUを割り当てる前の接続失敗は、Pythonパッケージのインストールとは別の段階です。
+対象はLinux x86_64、Python 3.12／3.13です。00・01と02〜07は別の専用環境を使います。
+LIBEROが要求するrobosuite 1.4.0を、Lift用の1.5.2と同じ環境にインストールしません。
 
-## 固定する主要パッケージ
+| パッケージ | Lift（00・01） | LIBERO・データ（02〜07） |
+| --- | --- | --- |
+| NumPy | 2.1.3 | 2.1.3 |
+| PyTorch | 2.11.0+cu128 | 2.11.0+cu128 |
+| torchvision | 0.26.0+cu128 | 0.26.0+cu128 |
+| LeRobot | 0.7.0 | 0.7.0 |
+| Transformers | 5.22.0 | 5.22.0 |
+| MuJoCo | 3.3.2 | 3.3.2 |
+| robosuite | 1.5.2の公式commit `95743f6687ad7394ccb6e865fa4e1b99114e580d` | 1.4.0 |
+| hf-libero | — | 0.1.4 |
+| PyAV | — | 15.1.0 |
+| OpenCVの通常版／headless版 | 両方4.13.0.92 | 両方4.13.0.92 |
+| CMake | 4.1.3 | 3.31.10 |
 
-| パッケージ | バージョン |
-| --- | --- |
-| NumPy | 2.1.3 |
-| PyTorch | 2.11.0+cu128 |
-| torchvision | 0.26.0+cu128 |
-| CUDAビルド | 12.8 |
-| LeRobot | 0.7.0 |
-| Transformers | 5.22.0 |
-| MuJoCo | 3.3.2 |
-| robosuite | 1.5.2の公式commit `95743f6687ad7394ccb6e865fa4e1b99114e580d` |
-| OpenCVの通常版／headless版 | 両方4.13.0.92 |
+PyTorchとtorchvisionは[CUDA 12.8の公式配布元](https://download.pytorch.org/whl/cu128)を使います。
+Colab標準のPyTorchやNumPyは継承せず、各回の`requirements-py312.txt`または`requirements-py313.txt`から入れます。
+03は同じデータ用ライブラリをCPUで使い、GPUを要求しません。
 
-robosuiteとLeRobotが異なるOpenCV配布名を要求するため、両方の版をそろえています。
-PyTorchとtorchvisionはCUDA 12.8の公式配布元を指定します。
-通常のPyPI版PyTorchに依存するCUDAパッケージとの混在を避けるため、CUDAの接尾辞も含めて固定します。
+Liftで使うrobosuiteはminkを任意依存にした公式commitです。
+LIBEROのネイティブ拡張をビルドするため、setuptools・wheel・CMakeを先に準備し、ビルド分離を無効にします。
+EGLヘッダーが不足する場合は、Colab内に必要なライブラリを入れます。
+別プロセスのMatplotlibはAggを使用し、MuJoCoのカメラ描画はEGLを使用します。
 
-間接依存を含む102パッケージは、以下に固定しています。
+## 固定リストの更新
 
-- Python 3.12：[colab-py312.txt](../requirements/colab-py312.txt)
-- Python 3.13：[colab-py313.txt](../requirements/colab-py313.txt)
+- Liftの入力：[lift.in](../requirements/lift.in)。配布元は`colab-py312.txt`／`colab-py313.txt`。
+- LIBEROの入力：[libero.in](../requirements/libero.in)。配布元は`libero-py312.txt`／`libero-py313.txt`。
+- 両方で使うライブラリの固定条件：[libero-shared-constraints.txt](../requirements/libero-shared-constraints.txt)。
 
-各ファイルの先頭に再生成コマンドを記載しています。
-更新時は依存解決だけでなく、インストール、`pip check`、主要モジュールのimport、環境起動を確認します。
+LIBEROの固定リスト先頭にあるコマンドはリポジトリルートから実行します。
+Liftを更新するときは`lift.in`のrobosuite公式commit指定を含め、現在の固定リストと差分を確認します。
+更新後は`pip check`、主要モジュールのimport、CUDA計算と短い実行を確認します。
 
-## セットアップ時の確認
+## モデル・データの版
 
-教材専用のvenvにインストールし、Colab標準のPythonパッケージを継承しません。
-インストール後は以下を確認してから実習へ進みます。
+- [SmolVLAチェックポイント](https://huggingface.co/HuggingFaceVLA/smolvla_libero/tree/6721902bc4d61e50a3bfdb11dfb4cb626f05d102)
+- [VLM設定・トークナイザー](https://huggingface.co/HuggingFaceTB/SmolVLM2-500M-Instruct/tree/7b375e1b73b11138ff12fe22c8f2822d8fe03467)
+- [LIBEROシーンアセット](https://huggingface.co/datasets/lerobot/libero-assets/tree/0b3ea86be5fe169d0fd036ae63d1070ec09e90f6)
+- [LeRobot形式のLIBEROデータ](https://huggingface.co/datasets/lerobot/libero/tree/a1aaacb7f6cd6ee5fb43120f673cebb0cfea7dd4)
 
-1. `pip check`で依存条件の不整合がないこと。
-2. NumPy・Torch間のデータ変換。
-3. MuJoCo、robosuite、SmolVLAとそのprocessorのimport。
-4. T4が割り当てられ、PyTorchのビルドに`sm_75`が含まれること。
-5. T4上の小さなCUDA計算が成功すること。
-
-結果は`outputs/environment.json`、`outputs/setup.json`、`outputs/setup.log`に保存します。
-実際に確認できた範囲は[検証状況](validation.md)を参照してください。
-
-## ColabのPython更新について
-
-前の教材はPython 3.12だけを受け付けていましたが、Colabの2026.10ランタイムはPython 3.13系です。
-現在はPythonのminor版に対応する固定依存リストを選びます。
-
-公式情報：[Colab Runtime Versions](https://research.google.com/colaboratory/runtime-version-faq.html)、
-[PyTorch CUDA 12.8配布元](https://download.pytorch.org/whl/cu128)。
+実行時の確認範囲は[検証状況](validation.md)を参照してください。

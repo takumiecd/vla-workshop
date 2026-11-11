@@ -1,51 +1,50 @@
 # 教材の開発用ファイル
 
-参加者は、このフォルダを扱う必要はありません。現在配布するのは、親フォルダの各回ディレクトリにあるipynbだけです。
-後続回では、実験設定のJSONや編集するPythonコードも同じディレクトリにまとめて配布する予定です。
+各回の配布物は、親フォルダの`00_environment/`〜`07_improvement/`にあります。
+参加者はその回のフォルダ一式を使い、この`_dev/`を参照しません。
 
-## 配置
+## 編集する場所
 
-- `src/vla_workshop/`：環境接続、SmolVLA接続、動画・ログの記録。
-- `configs/`・`requirements/`：実行条件と固定した依存関係。
-- `notebooks/lesson.template.ipynb`：説明と実行セルの原稿。
-- `scripts/`：ノートブックの生成とColab内のセットアップ。
-- `tests/`：共通処理のテスト。
-- `docs/`：入出力仕様、バージョン、参照元、検証記録。
+- `src/vla_workshop/`：共通処理の原稿。配布時に同じ回の通常のPythonファイルへ変換します。
+- `scripts/lesson_content.py`：各回のノートブックに見せる設定・実行・結果確認のセル。
+- `materials/`：参加者が編集する`collector.py`と`experiment.py`の原稿。
+- `configs/`：各回の初期設定。
+- `requirements/`：Lift用とLIBERO用の固定依存リスト。
+- `tests/`：入出力、分割、記録、比較の検証。
 
-## 更新する
+## 配布物を生成する
 
-共通処理は`src/`、説明や実行セルはテンプレートを編集します。
-このフォルダで次を実行すると、親フォルダの各回ディレクトリに00・01を再生成します。
+このフォルダで実行します。開発環境にはRuff、またはRuffを実行できるuvを用意してください。
 
 ```bash
 python3 scripts/build_colab_notebook.py
 python3 scripts/build_colab_notebook.py --check
 ```
 
-各冊には同じ共通プログラムが同梱され、前の冊の変数やファイルに依存しません。
-生成済みのipynbを直接変更した場合は、次の再生成前に変更をテンプレートへ反映してください。
+配布する`.py`は同じ回のファイルだけをimportし、`vla_workshop`パッケージをimportしません。
+ノートブックにもコードを隠して埋め込まず、使うファイルと実行する処理を明示します。
+各回一式のZIPと、8回分をまとめた`vla_workshop_00-07.zip`は`outputs/distribution/`に生成します。
+生成したファイルを直接変更すると、再生成で上書きされます。講師の修正は上記の原稿に反映してください。
+参加者は自分に配布されたコピーのPython・JSONを編集できます。
 
-## 配布する
+## 実行環境
 
-各回を1回ずつ共有Driveへ置くか、Colabリンクを案内します。
-ipynbだけの回はそのファイルを、複数ファイルの回はディレクトリ一式を配ります。
-参加者には原本から自分のDriveへコピーしてもらいます。
-配布用の設定・サンプルデータが必要になった回では、その回のディレクトリに追加します。
-READMEの実習一覧に、公開した回のリンクを追加していきます。未完成のipynbを作る必要はありません。
-結果の保存先は最後のセルの`RESULTS_DIR`で指定します。
-00〜07の目的・達成条件・配布予定は[教材一覧](../README.md#全体の予定)で管理します。
-新しい回を追加するときは、そこで決めた達成条件と、必要ファイルの配置を冒頭に明記してください。
+00・01はrobosuite 1.5.2、02以降はLIBEROが要求するrobosuite 1.4.0を使います。
+それぞれの回の専用venvに固定依存を入れ、同じ環境へ混ぜません。
+03はCPUでデータを扱います。他の回はT4を確認します。
+LIBEROのネイティブビルドにはCMakeなどを先に入れ、ビルド分離を使わずにインストールします。
 
-## 確認する
+## 検証する
 
-Python 3.12／3.13の開発環境で実行します。
+共通処理の開発用には、対応する固定依存を入れてから`pip install --no-deps -e .`を実行します。
+配布物の実行では教材パッケージのインストールは不要です。
 
 ```bash
 python -m pytest -q
-ruff check src tests lessons scripts notebooks
-ruff format --check src tests lessons scripts notebooks
+ruff check src tests scripts materials
+ruff format --check src tests scripts materials
 python3 scripts/build_colab_notebook.py --check
 ```
 
-[ローカルでの実行](docs/development.md) · [入出力仕様](docs/io_contract.md) ·
-[固定バージョン](docs/versions.md) · [検証状況](docs/validation.md) · [参照元](docs/references.md)
+[入出力仕様](docs/io_contract.md) · [バージョン](docs/versions.md) ·
+[検証状況](docs/validation.md) · [参照元](docs/references.md)

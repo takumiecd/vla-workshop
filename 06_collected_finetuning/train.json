@@ -1,0 +1,36 @@
+{
+  "policy": {
+    "path": "HuggingFaceVLA/smolvla_libero",
+    "revision": "6721902bc4d61e50a3bfdb11dfb4cb626f05d102",
+    "vlm_revision": "7b375e1b73b11138ff12fe22c8f2822d8fe03467",
+    "device": "cuda",
+    "n_action_steps": 1,
+    "camera_map": {
+      "observation.images.image": "agentview",
+      "observation.images.image2": "robot0_eye_in_hand"
+    },
+    "image_transform": "rotate180"
+  },
+  "dataset": {
+    "repo_id": "lerobot/libero",
+    "revision": "a1aaacb7f6cd6ee5fb43120f673cebb0cfea7dd4",
+    "root": null,
+    "train_episodes": [
+      1642,
+      1660,
+      1669
+    ],
+    "validation_episodes": [
+      1672
+    ],
+    "replay_episode": 1642,
+    "preview_frames": 100
+  },
+  "steps": 10,
+  "batch_size": 1,
+  "validation_every": 5,
+  "learning_rate": 0.0001,
+  "max_grad_norm": 1.0,
+  "seed": 1000,
+  "resume_from": null
+}
