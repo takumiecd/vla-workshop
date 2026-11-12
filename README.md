@@ -23,7 +23,7 @@ vla_workshop/
 | 01 | SmolVLAを読み込み、観測→推論→行動実行をつなぐ | T4 | [01_smolvla_inference.zip](https://github.com/takumiecd/vla-workshop/releases/latest/download/01_smolvla_inference.zip) |
 | 02 | LIBEROのタスク・初期状態を固定し、成功率と失敗動画を記録する | T4 | [02_libero_evaluation.zip](https://github.com/takumiecd/vla-workshop/releases/latest/download/02_libero_evaluation.zip) |
 | 03 | データを再生し、観測・行動の対応と学習・検証の分割を確認する | CPU | [03_dataset.zip](https://github.com/takumiecd/vla-workshop/releases/latest/download/03_dataset.zip) |
-| 04 | LoRAで学習し、学習率を変えたときの違いを確認する | T4 | [04_finetuning.zip](https://github.com/takumiecd/vla-workshop/releases/latest/download/04_finetuning.zip) |
+| 04 | LoRAで学習率の違いを比べ、ボウルを置く動作の学習前後を見る | T4 | [04_finetuning.zip](https://github.com/takumiecd/vla-workshop/releases/latest/download/04_finetuning.zip) |
 | 05 | モデルを何回か動かし、成功した試行をLeRobot形式へ変換する | T4 | [05_collection.zip](https://github.com/takumiecd/vla-workshop/releases/latest/download/05_collection.zip) |
 | 06 | 総復習。収集したデータでLoRAを学習し、元のモデルと比較する | T4 | [06_collected_finetuning.zip](https://github.com/takumiecd/vla-workshop/releases/latest/download/06_collected_finetuning.zip) |
 
@@ -51,11 +51,11 @@ vla_workshop/
 
 ## 各回のポイント
 
-- **00・01**：Pandaを使って、Lift環境で画像・状態・行動を確認します。ステップ上限は初期設定で00が100、01が200です。`MAX_STEPS` で上限を変えられます。SmolVLAを実行する回では、初期設定で25行動ごとに予測し直します。`N_ACTION_STEPS` で間隔を変えられます。
+- **00・01**：Pandaを使って、Lift環境で画像・状態・行動を確認します。ステップ上限は初期設定で00が100、01が200です。`MAX_STEPS` で上限を変えられます。01では、SmolVLAが初期設定で25行動ごとに予測し直します。`N_ACTION_STEPS` で間隔を変えられます。
 - **02**：初期設定では1つの初期配置を最大200ステップ動かします。短い動作確認なら `MAX_STEPS` で20を選べます。成功率を比較するときは、タスク・初期配置・ステップ上限・再予測の間隔をそろえます。
 - **03**：公開データの`lerobot/libero`から、02で評価したタスクと同じ指示のエピソードを再生します。
 - **04**：元の重みを固定してLoRAだけを学習します。学習率だけを変え、1回に1サンプルずつ3回更新して比較します。
-  正規化は元のモデル付属の統計を使います。最後に検証用の小さなバッチでlossを計算します。
+  冒頭で初期配置25の学習前後を動画で見られます。「配置25の学習を再現」を選ぶと、実測例と同じ200更新の設定で学習します。正規化は元のモデル付属の統計を使います。
 - **05**：モデルでLIBEROを何回か動かし、成功した試行を学習データにします。動画で成功・未達を確認します。
 - **06**：05で変換した成功試行を3件以上用意します。最後の1件を検証用、残りを学習用にし、LoRAで学習します。元のモデルと学習後のモデルを同じタスク・開始時の配置で比べます。
 
