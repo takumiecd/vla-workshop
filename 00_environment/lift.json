@@ -1,6 +1,6 @@
 {
   "seed": 0,
-  "max_steps": 20,
+  "max_steps": 100,
   "env": {
     "task": "Lift",
     "robot": "Panda",

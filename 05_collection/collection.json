@@ -21,7 +21,7 @@
     "revision": "6721902bc4d61e50a3bfdb11dfb4cb626f05d102",
     "vlm_revision": "7b375e1b73b11138ff12fe22c8f2822d8fe03467",
     "device": "cuda",
-    "n_action_steps": 1,
+    "n_action_steps": 25,
     "camera_map": {
       "observation.images.image": "agentview",
       "observation.images.image2": "robot0_eye_in_hand"
